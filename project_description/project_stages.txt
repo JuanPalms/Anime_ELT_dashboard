@@ -1,0 +1,199 @@
+Project stages:
+
+The project is divided in three stages:
+Stage 0 - Define repository structure based on the stages and milestones of this document. 
+Stage 1- Building the dashboard and deploying in local (or github based) environment
+Stage 2- Deployment in a cloud-based environment.
+
+Stage 0- Define repository structure based on the stages and milestones of this document.
+Member of the team responsible for this stage
+
+
+Stage 1- Building the dashboard and deploying in local (or github based) environment:
+
+At this stage we will concentrate on the data extraction and development of the dashboard. In particular, we will focus on the data extraction process with web scraping and we will build the basic structure of the dashboard in streamlit. 
+The stage is divided in two milestones: I) Web scrapping and II) Data processing and streamlit. For each milestone, team members were assigned the roles of 1) milestone developers, 2) testing team members and 3) milestone validation or completion team members.
+
+I) Web scrapping:
+   
+    *  Milestone developers: Eduardo & Juan
+ 
+    Project setup and environment configuration:
+    a. Configure a reproducible environment: 
+       Set up a new Python project with a virtual environment, conda or docker container.
+    b. Install required libraries (e.g., Beautiful Soup or Scrapy, Requests, Pandas, etc.).
+
+    Select and analyze the target website:
+    a. Review the target website ("https://myanimelist.net/topanime.php") and its structure.
+    b. Identify the relevant HTML elements and attributes that contain the required information.
+    c. Create a dictionary of the data that is expected to obtain in the completion metric of this milestone.
+
+    Implement the web scraping script:
+    a. Write a Python script that fetches the target web page using the Requests library or Scrapy.
+    b. Parse the fetched HTML content using Beautiful Soup or Scrapy's built-in parsing capabilities.
+    c. Extract the desired information (Name, Release date, Number of episodes, Animation studio, and Genre) from the parsed HTML content.
+
+    Save the extracted data:
+    a. Store the extracted data in a suitable data structure (e.g., Python lists or dictionaries).
+    b. Convert the data structure into a Pandas DataFrame for easier data manipulation.
+
+    * Testing team: Miguel
+    First test date: April/02/2023
+
+    Test and validate the web scraping script:
+    a. Run the script to ensure that the data is being extracted correctly.
+    b. Check for any missing or inconsistent data and adjust the script as needed.
+
+
+    * Completition team: Ricardo
+
+    Completition metric: 
+    
+
+    a) Pandas dataframe containing all the information for columns:
+    Minimal data:
+    1) anime_name, 2) score, 3) ranking,  4) emission_date, 3) anime_studio, 4) genre 
+    Desired data:
+    5) emission_type, 6) emission_season, 7) theme, 8) demographic.
+    
+    b) Set the analysis results expected to display in the dashboard.
+    Define the statistics, graphs and analysis that should be displayed in the dashboard.
+    Document the project process and build ppt slides.
+ 
+    Suggested completition date: April/04/2023
+
+
+II) Data Processing and Streamlit
+    
+    * Milestone developers: Miguel & Juan
+
+    Data Cleaning:
+    a. Inspect the raw data in the Pandas DataFrame and identify any issues (e.g., missing or inconsistent data).
+    b. Clean and preprocess the data using Pandas and NumPy to correct any issues found.
+    c. Transform the data into a suitable format for analysis and visualization (e.g., convert dates to datetime objects, categorize genres, etc.).
+    d. Save the cleaned data as a new CSV file or another suitable format for easy access during the data processing and dashboard creation steps.
+
+    Data Processing:
+    a. Load the cleaned data into a new Pandas DataFrame.
+    b. Perform any necessary data aggregation, filtering, or manipulation to prepare the data for visualization and analysis.
+    c. Calculate descriptive statistics, such as averages, medians, and frequency distributions, to better understand the data.
+    d. Identify any trends or patterns in the data that could be relevant to the causal inference question.
+
+    Dashboard Creation with Streamlit:
+    a. Set up a new Streamlit project and install any required libraries (e.g., Streamlit, Plotly, or Matplotlib).
+    b. Create a basic layout for the dashboard, including navigation elements and placeholders for visualizations.
+    c. Implement data loading and caching in Streamlit using the @st.cache decorator to improve performance.
+    d. Add visualizations to the dashboard using libraries like Plotly, Seaborn, or Matplotlib to represent the data in various formats (e.g., bar charts, pie charts, line charts, etc.).
+    e. Display the calculated descriptive statistics and insights related to the causal inference question in the dashboard.
+    f. Add interactive elements to the dashboard, such as filters or sliders, to allow users to explore the data in more depth.
+
+    * Testing team: Eduardo
+
+    Testing and refinement:
+    a. Test the dashboard locally to ensure that all visualizations and interactive elements work as expected.
+    b. Refine the visualizations, layout, and other components of the dashboard based on user feedback or additional requirements.
+    c. Optimize the dashboard's performance by adjusting the caching strategy or other settings as needed.
+    
+    First test date: April/07/2023
+
+   * Completition team: Ricardo
+   
+    Completition metric:
+    Perfom multiple test in the final user interface in the locally or github deployed streamlit dashboard.
+    Document the test and validate the user experience with the dashboard.
+    Document the project process and build ppt slides 
+
+    Suggested completition date: April/09/2023
+
+
+Stage 2- Deployment in a cloud-based environment.
+
+At this stage we will focus on the deployment of the dashboard in a cloud based environment. In particular, we store the scrapped data in a Datalake (S3 bucket) and the ready-to analyze data in a Datawarehouse ( S3 bucket), deploy the Streamlit dashboard in an EC2 AWS instance and (if the time available to complete the project allows it) we set up a routine for automated and scheduled web scrapping using CloudWatch and Lambda AWS function. 
+
+The stage is divided in two milestones: I) Minimal deployment II) Extended deployment. For each milestone, team members were assigned the roles of 1) milestone developers, 2) testing team members and 3) milestone validation or completion team members.
+
+I) Minimal deployment:
+    
+   * Milestone developers: Miguel & Juan
+
+    Data Lake storage (S3 bucket):
+    a. Set up an AWS account and configure the AWS CLI with the necessary credentials.
+    b. Create an S3 bucket for the Data Lake, where we will store the raw, scraped data.
+    c. Upload the raw data (e.g., CSV, JSON, or Parquet file) to the Data Lake S3 bucket using the AWS CLI, SDK (boto3), or the AWS Management Console.
+
+    Data Warehouse storage (S3 bucket):
+    a. Create another S3 bucket for the Data Warehouse, where we will store the cleaned and ready-to-analyze data.
+    b. Upload the cleaned data (e.g., CSV, JSON, or Parquet file) to the Data Warehouse S3 bucket using the AWS CLI, SDK (boto3), or the AWS Management Console.
+
+    EC2 Instance setup and configuration:
+    a. Set up and launch an EC2 instance in AWS.
+    b. Configure the necessary security groups and IAM roles/policies to access the S3 buckets and other AWS resources.
+    c. Connect to the EC2 instance using SSH and install the required libraries (e.g., Streamlit, Pandas, boto3, etc.).
+
+    Streamlit dashboard deployment on EC2:
+    a. Modify the Streamlit dashboard code to read the cleaned data from the Data Warehouse S3 bucket instead of a local file.
+    b. Copy the modified Streamlit dashboard code to the EC2 instance with some code transfer method.
+    c. Install and configure a web server (e.g., Nginx or Apache) as a reverse proxy to redirect requests to the Streamlit dashboard.
+    d. Start the Streamlit dashboard on the EC2 instance and ensure that the web server is configured correctly.
+
+    Testing phase:
+    * Testing team: Eduardo 
+    Test the dashboard by accessing its public IP address or domain name in a web browser.
+    
+    First test date: April/15/2023
+
+
+   * Completition team: Ricardo
+
+    Completition metric:
+    Perfom multiple test in the final user interface in the cloud-based environment streamlit dashboard.
+    Document the test and validate the user experience with the dashboard.
+
+    Suggested completition date: April/18/2023
+
+II) Extended deployment: 
+
+    * Milestone developers: Every team member can contribute in this step based on personal availability, personal needs or project interest. 
+  
+    Set up the AWS Lambda function:
+    a. Create an AWS Lambda function within the AWS Management Console.
+    b. Select a Python runtime for the Lambda function.
+    c. Increase the timeout and memory settings if required for the web scraping process.
+    d. Add necessary libraries (e.g., BeautifulSoup, Scrapy, requests, Pandas, etc.) to a deployment package (a .zip file) along with your Lambda function code.
+    e. Upload the deployment package to your Lambda function.
+    f. Set up the necessary IAM roles and policies for the Lambda function to access other AWS services (e.g., S3, CloudWatch, etc.).
+
+    Modify the web scraping code for AWS Lambda:
+    a. Modify the existing web scraping code to be compatible with AWS Lambda's event-driven architecture.
+    b. Ensure that the code reads the input event (e.g., CloudWatch event) and handles any necessary parameters.
+    c. Update the code to store the scraped data in the Data Lake S3 bucket and the cleaned data in the Data Warehouse S3 bucket using the boto3 library.
+
+    Test the Lambda function:
+    a. Invoke the Lambda function manually by creating a test event within the AWS Management Console.
+    b. Check the Lambda function logs in Amazon CloudWatch to ensure the web scraping process is working as expected.
+    c. Verify that the scraped data is stored in the Data Lake S3 bucket and the cleaned data in the Data Warehouse S3 bucket.
+
+    Set up CloudWatch Events for automation:
+    a. Create a new Amazon CloudWatch Events rule in the AWS Management Console.
+    b. Define the schedule for the rule, such as a fixed rate (e.g., every day or every week) or a cron expression for more complex scheduling.
+    c. Add the Lambda function as a target for the CloudWatch Events rule.
+    d. Configure the necessary input parameters for the Lambda function, if any.
+    e. Test the CloudWatch Events rule to ensure it triggers the Lambda function according to the defined schedule.
+
+    * Testing members: -
+    
+    First test date: based on project progress and team members needs
+
+    Completition metrics:
+    
+    Perfom multiple test in the final user interface in the cloud-based environment streamlit dashboard.
+    Document the test and validate the user experience with the dashboard.
+
+    Suggested completition date: based on project progress and team members needs.
+
+
+Addtional tasks: 
+Based on poject performance and specific team members needs:
+   -  Build a causal inference reasech question. 
+
+

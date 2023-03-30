@@ -1,0 +1,35 @@
+## Pipeline steps:
+
+Web Scraping (Automated with AWS Lambda and CloudWatch Events):
+a. Create an AWS Lambda function that performs web scraping using Beautiful Soup or Scrapy in Python.
+b. Extract the following information: Name of the anime or show, Release date, Number of episodes, Animation studio, and Genre.
+c. Schedule CloudWatch Events to periodically invoke the Lambda function (e.g., daily or weekly).
+
+Data Cleaning:
+a. Use libraries like Pandas and NumPy within the Lambda function to clean and organize the data.
+b. Check and correct missing or inconsistent data.
+c. Transform the data into a suitable format for analysis and visualization (e.g., convert dates to datetime objects).
+
+Data Storage in AWS S3:
+a. Set up AWS S3 credentials and connection with the boto3 library within the Lambda function.
+b. Create an S3 bucket if it does not already exist.
+c. Save the dataset in CSV, JSON, or Parquet format in the S3 bucket.
+
+Data Processing and Dashboard Creation with Streamlit (With caching to improve performance):
+a. Use the Streamlit library in Python to create the dashboard.
+b. Read the data stored in S3 and load it into a Pandas DataFrame.
+c. Implement a caching system in the Streamlit dashboard using the @st.cache function to reduce the load on the EC2 instance and improve performance.
+d. Perform analysis and calculations necessary to display descriptive statistics and answer causal inference questions.
+e. Use charts and visualizations (e.g., with Matplotlib, Seaborn, or Plotly) to represent the data in the dashboard.
+
+Deploying the Dashboard on an AWS EC2 Instance (Following AWS Security Best Practices):
+a. Set up and launch an EC2 instance in AWS with the Amazon Linux 2 image and Python 3.x installed.
+b. Install the necessary libraries on the EC2 instance (e.g., Streamlit, Pandas, Beautiful Soup, boto3, etc.).
+c. Copy the dashboard code to the EC2 instance.
+d. Set up a web server (e.g., Nginx or Apache) as a reverse proxy to redirect requests to the Streamlit dashboard.
+e. Start the Streamlit dashboard and ensure that the web server is configured correctly.
+f. Create and configure a security group in AWS to allow access to the dashboard from the Internet.
+g. Create appropriate IAM roles and policies to limit access to AWS resources and apply the principle of least privilege.
+
+
+
