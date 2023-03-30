@@ -6,7 +6,7 @@ Stage 1- Building the dashboard and deploying in local (or github based) environ
 Stage 2- Deployment in a cloud-based environment.
 
 Stage 0- Define repository structure based on the stages and milestones of this document.
-Member of the team responsible for this stage
+Member of the team responsible for this stage: Juan
 
 
 Stage 1- Building the dashboard and deploying in local (or github based) environment:
