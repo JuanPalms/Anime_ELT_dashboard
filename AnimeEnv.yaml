@@ -1,0 +1,11 @@
+name: AnimeEnv
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python = 3.10.9
+  - pip
+  - pyyaml
+  - numpy
+  - pandas
+  - beautifulsoup4
