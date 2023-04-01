@@ -1,0 +1,7 @@
+  python = 3.10.9
+  pip
+  pyyaml
+  numpy
+  pandas
+  beautifulsoup4
+  streamlit
