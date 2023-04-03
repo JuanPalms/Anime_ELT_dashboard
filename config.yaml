@@ -1,1 +1,13 @@
 # Repository configuration
+
+# Principal url for web scrapping
+url: "https://myanimelist.net/topanime.php"
+
+# Total amount of animes processed having a ranking
+results_limit: 13850
+
+# 1) DIRECTORIES
+data_directory: ../data
+raw_data: /raw
+clean_data: /clean
+

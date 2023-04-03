@@ -3,11 +3,15 @@ Web scrapper module:
 This python module implements a web scrapper for the main page of My anime list.
 With this web scrapper you get information for each anime that has been rated on the my anime list top anime page.
 The results are stored in a csv in the raw data folder.
+This module only obtains data web scrapping the page, further processing is needed in othe python modules.
 """
 import pandas as pd
 import numpy as np
 import os
 from outils import load_config, fetch_html
+
+# Load config file calling load_config function
+config_f = load_config("config.yaml")
 
 def web_scrapper_principal(url,parser='lxml'):
     """
@@ -66,13 +70,15 @@ def web_scrapper_principal(url,parser='lxml'):
         return pd.DataFrame()
 
 
-lista_urls = ['https://myanimelist.net/topanime.php']
-
-#for i in range(50, 13850, 50):
- #   base = "https://myanimelist.net/topanime.php?limit="
-  #  lista_urls.append(base + str(i))
+base = config_f["url"]
+lista_urls = [base]
+## iterates over 13850 elements in 300 pages
+for i in range(50, config_f["results_limit"], 50):
+    lista_urls.append(base + str(i))
 
 # Loop through the list of URLs and process each URL, then concatenate the resulting DataFrames
 dataframes = [web_scrapper_principal(url) for url in lista_urls]
 combined_df = pd.concat(dataframes, ignore_index=True)
-combined_df.to_csv('prueba_pipeline.csv',index=False)
+
+
+combined_df.to_csv(os.path.join(config_f["data_directory"]+config_f["raw_data"],"raw_anime_principal_page.csv"),index=False)
