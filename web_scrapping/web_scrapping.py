@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import os
 from outils import load_config, fetch_html
+import time
 
 # Load config file calling load_config function
 config_f = load_config("config.yaml")
@@ -74,11 +75,19 @@ base = config_f["url"]
 lista_urls = [base]
 ## iterates over 13850 elements in 300 pages
 for i in range(50, config_f["results_limit"], 50):
-    lista_urls.append(base + str(i))
+    lista_urls.append(base + "?limit="+str(i))
 
-# Loop through the list of URLs and process each URL, then concatenate the resulting DataFrames
-dataframes = [web_scrapper_principal(url) for url in lista_urls]
+
+# Initialize an empty list to store the DataFrames
+dataframes = []
+
+# Loop through the list of URLs and process each URL, then append the resulting DataFrame to the list
+for url in lista_urls:
+    dataframes.append(web_scrapper_principal(url))
+    # Sleep for 10 seconds before moving to the next URL
+    print(dataframes[-1])
+    time.sleep(10)
+# Concatenate the list of DataFrames into a single DataFrame
 combined_df = pd.concat(dataframes, ignore_index=True)
-
 
 combined_df.to_csv(os.path.join(config_f["data_directory"]+config_f["raw_data"],"raw_anime_principal_page.csv"),index=False)

@@ -4,7 +4,7 @@
 url: "https://myanimelist.net/topanime.php"
 
 # Total amount of animes processed having a ranking
-results_limit: 13850
+results_limit: 13900
 
 # 1) DIRECTORIES
 data_directory: ../data
