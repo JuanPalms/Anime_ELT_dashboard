@@ -1,0 +1,17 @@
+id,genres
+0,action
+1,adventure
+2,award_winning
+3,comedy
+4,drama
+5,ecchi
+6,fantasy
+7,horror
+8,mystery
+9,not_available
+10,romance
+11,sci_fi
+12,slice_of_life
+13,sports
+14,supernatural
+15,suspense
