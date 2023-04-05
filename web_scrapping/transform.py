@@ -192,14 +192,14 @@ df_processed.to_csv(
     os.path.join(OUT_PATH, 'anime_transform.csv')
     ,index=False)
 
-# save catalogs
+# Save catalogs
 for cat_ in catalogs:
     # Extract catalog name from dictionary
     col_ = list(cat_.keys())[0]
     # Convert catalog content to dataframe
     cat_ = pd.DataFrame(cat_[col_])
     # Generate file name
-    name = f'cat_{cat_.columns[0]}'
+    name = f'cat_{col_}'
     # Save output data
     cat_.to_csv(
         os.path.join(OUT_PATH, name)
