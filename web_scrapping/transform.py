@@ -34,7 +34,7 @@ format_list_str = lambda cel_: [
 
 
 # Script functions
-def build_catalog(df_, columns):
+def build_catalog(df_, columns, count=True):
     '''
     Generate catalog of unique classes in column
     for given dataframe
@@ -42,6 +42,7 @@ def build_catalog(df_, columns):
     Params:
         df_: Dataframe
         columns: Columns to extract classes
+        count: Whether to return value counts or not
 
     Returns:
         catalogs: List of dictionaries, length = len(columns)
@@ -61,7 +62,34 @@ def build_catalog(df_, columns):
             tokens += val_
         
         # Assign unique tokens in list to catalog
-        catalogs[id_][col_] = sorted(pd.Series(tokens).unique())
+        if count:
+            catalogs[id_][col_] = (
+                # Convert tokens list to pandas series
+                pd.Series(tokens)
+                # Extract series value counts
+                .value_counts()
+                # Reset index to store tokens as dataframe
+                .reset_index()
+                # Rename columns with convenient names
+                .rename(columns={'index':col_, 0:'count'})
+                # Sort tokens alphabetically
+                .sort_values(by=col_)
+                # Reset dataframe index
+                .reset_index(drop=True))
+        else:
+            catalogs[id_][col_] = (
+                # Convert array to dataframe for manipulation
+                pd.DataFrame(
+                    # Convert tokens list to pandas series
+                    pd.Series(tokens)
+                    # Extract series unique values
+                    .unique())
+                # Rename columns with convenient names
+                .rename(columns={0:col_})
+                # Sort tokens alphabetically
+                .sort_values(by=col_)
+                # Reset dataframe index
+                .reset_index(drop=True))
     
     return catalogs
 
@@ -154,19 +182,25 @@ df_processed = (
 )
 
 # Generate catalogs
-catalogs = build_catalog(df_=df_processed, columns=['themes','genres'])
+catalogs = build_catalog(
+    df_=df_processed
+    ,columns=['themes','genres']
+    ,count=True)
 
-# Save output data
-
-# Transformed anime data
+# Save transformed anime data
 df_processed.to_csv(
     os.path.join(OUT_PATH, 'anime_transform.csv')
     ,index=False)
 
-# Catalogs
+# save catalogs
 for cat_ in catalogs:
-    cat_ = pd.DataFrame(cat_)
+    # Extract catalog name from dictionary
+    col_ = list(cat_.keys())[0]
+    # Convert catalog content to dataframe
+    cat_ = pd.DataFrame(cat_[col_])
+    # Generate file name
     name = f'cat_{cat_.columns[0]}'
+    # Save output data
     cat_.to_csv(
         os.path.join(OUT_PATH, name)
         ,index_label='id')
