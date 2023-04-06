@@ -8,6 +8,6 @@ results_limit: 13900
 
 # 1) DIRECTORIES
 data_directory: ../data
-raw_data: /raw
+transform_data: /transform
 clean_data: /clean
 
