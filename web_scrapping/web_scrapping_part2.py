@@ -23,7 +23,7 @@ import time
 # Load config file calling load_config function
 config_f = ou.load_config("config.yaml")
 
-def _get_studio_themes_genres_demographics(url):
+def _get_studio_themes_genres_demographics(url: str) -> str:
     try:
         soup = ou.fetch_html(url)
         div_elements = soup.find_all('div', class_="spaceit_pad")
@@ -54,12 +54,23 @@ def _get_studio_themes_genres_demographics(url):
         print(f"Error processing URL: {url}")
         return None, None, None, None
 
-def _process_url(url):
+def _process_url(url: str) -> str:
     delay = 1  # Add your desired delay in seconds here
     time.sleep(delay)
     return pd.Series(_get_studio_themes_genres_demographics(url))
 
-def _df_construction(top_anime):
+def _df_construction(top_anime: pd.DataFrame) -> pd.DataFrame:
+    """
+    Creates a Dataframe with already existing columns of anime_principal_page.csv.
+    
+    Args:
+    top_anime: The functions expects a pd.DataFrame of anime_principal_page.csv
+    
+    Returns:
+    top_anime: A brand new pd.DataFrame consisting of columns already in anime_principal_page.csv 
+    but it adds:'studio', 'themes', 'genres', 'demographics' to it.
+    
+    """
     urls = top_anime['url'].tolist()
     results = []
     total_urls = len(urls)
@@ -76,7 +87,17 @@ def _df_construction(top_anime):
     top_anime[['studio', 'themes', 'genres', 'demographics']] = pd.DataFrame(results)
     return top_anime
     
-def fetch_data_per_anime():
+def fetch_data_per_anime() -> None:
+    """
+    Pipeline for creating anime_principal_and_secondary_pages.csv
+    
+    Args:
+
+    
+    Returns:
+
+    
+    """
     top_anime = pd.read_csv(ou.PARENT_PATH+"/data/raw/anime_principal_page.csv")
     top_anime = _df_construction(top_anime=top_anime)
     top_anime.to_csv(ou.PARENT_PATH+"/data/raw/anime_principal_and_secondary_pages.csv",index=False)
