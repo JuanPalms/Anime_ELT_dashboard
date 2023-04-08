@@ -87,7 +87,7 @@ checkpoints = [50,100,150,200,240]
 for pages,url in enumerate(lista_urls):
     if pages in checkpoints:
         dataframes.append(web_scrapper_principal(url))
-        # Sleeps for 2 minute
+        # Sleeps for 2 minutes
         print(dataframes[-1])
         time.sleep(200)
     else:
@@ -99,5 +99,6 @@ for pages,url in enumerate(lista_urls):
 # Concatenate the list of DataFrames into a single DataFrame
 combined_df = pd.concat(dataframes, ignore_index=True)
 
-combined_df.to_csv(ou.PARENT_PATH+"/data/clean/anime_principal_page.csv",index=False)
+# DF exported to csv
+combined_df.to_csv(ou.PARENT_PATH+"/data/raw/anime_principal_page.csv",index=False)
 
