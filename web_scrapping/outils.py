@@ -10,6 +10,9 @@ from bs4 import BeautifulSoup
 # folder to load config file
 CONFIG_PATH = "../"
 
+# Current path
+PARENT_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))                                         
+
 # Function to load yaml configuration file
 def load_config(config_name):
     """
@@ -19,7 +22,7 @@ def load_config(config_name):
     Returns:
     Configuration file
     """
-    with open(os.path.join(CONFIG_PATH, config_name), encoding="utf-8") as conf:
+    with open(os.path.join(PARENT_PATH, config_name), encoding="utf-8") as conf:
         config = yaml.safe_load(conf)
     return config
 

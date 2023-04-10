@@ -9,7 +9,8 @@ This module only obtains data web scrapping the page, further processing is need
 import pandas as pd
 import numpy as np
 import os
-from outils import load_config, fetch_html
+import outils as ou
+
 import time
 from concurrent.futures import ThreadPoolExecutor
 
@@ -17,14 +18,14 @@ import pandas as pd
 import numpy as np
 import os
 import time
-from outils import load_config, fetch_html
+
 
 # Load config file calling load_config function
-config_f = load_config("config.yaml")
+config_f = ou.load_config("config.yaml")
 
-def get_studio_themes_genres_demographics(url):
+def _get_studio_themes_genres_demographics(url: str) -> str:
     try:
-        soup = fetch_html(url)
+        soup = ou.fetch_html(url)
         div_elements = soup.find_all('div', class_="spaceit_pad")
 
         studio = None
@@ -53,25 +54,52 @@ def get_studio_themes_genres_demographics(url):
         print(f"Error processing URL: {url}")
         return None, None, None, None
 
-def process_url(url):
-    delay = 4  # Add your desired delay in seconds here
+def _process_url(url: str) -> str:
+    delay = 1  # Add your desired delay in seconds here
     time.sleep(delay)
-    return pd.Series(get_studio_themes_genres_demographics(url))
+    return pd.Series(_get_studio_themes_genres_demographics(url))
 
-top_anime = pd.read_csv(os.path.join(config_f["data_directory"]+config_f["raw_data"],"raw_anime_principal_page.csv"))
-top_anime = top_anime[101:3000]
+def _df_construction(top_anime: pd.DataFrame) -> pd.DataFrame:
+    """
+    Creates a Dataframe with already existing columns of anime_principal_page.csv.
+    
+    Args:
+    top_anime: The functions expects a pd.DataFrame of anime_principal_page.csv
+    
+    Returns:
+    top_anime: A brand new pd.DataFrame consisting of columns already in anime_principal_page.csv 
+    but it adds:'studio', 'themes', 'genres', 'demographics' to it.
+    
+    """
+    urls = top_anime['url'].tolist()
+    results = []
+    total_urls = len(urls)
+    for index, url in enumerate(urls):
+        if index%80==0:
+            print(f"Processing URL {index+1} of {total_urls}: {url}")
+            results.append(_process_url(url))
+            print(results[-1])
+            time.sleep(160)
+        else:
+            print(f"Processing URL {index+1} of {total_urls}: {url}")
+            results.append(_process_url(url))
+            print(results[-1])
+    top_anime[['studio', 'themes', 'genres', 'demographics']] = pd.DataFrame(results)
+    return top_anime
+    
+def fetch_data_per_anime() -> None:
+    """
+    Pipeline for creating anime_principal_and_secondary_pages.csv
+    
+    Args:
 
-urls = top_anime['url'].tolist()
+    
+    Returns:
 
-results = []
-
-total_urls = len(urls)
-
-for index, url in enumerate(urls):
-    print(f"Processing URL {index+1} of {total_urls}: {url}")
-    results.append(process_url(url))
-    print(results[-1])
-
-top_anime[['studio', 'themes', 'genres', 'demographics']] = pd.DataFrame(results)
-
-top_anime.to_csv(os.path.join(config_f["data_directory"]+config_f["raw_data"],"raw_anime_principal_and_secondary_pages.csv"),index=False)
+    
+    """
+    top_anime = pd.read_csv(ou.PARENT_PATH+"/data/raw/anime_principal_page.csv")
+    top_anime = _df_construction(top_anime=top_anime)
+    top_anime.to_csv(ou.PARENT_PATH+"/data/raw/anime_principal_and_secondary_pages.csv",index=False)
+    
+fetch_data_per_anime()
