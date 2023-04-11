@@ -19,9 +19,16 @@ import numpy as np
 import os
 import time
 
+CURRENT = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(CURRENT)
+
+
+
 
 # Load config file calling load_config function
 config_f = ou.load_config("config.yaml")
+
+
 
 def _get_studio_themes_genres_demographics(url: str) -> str:
     try:
@@ -55,51 +62,87 @@ def _get_studio_themes_genres_demographics(url: str) -> str:
         return None, None, None, None
 
 def _process_url(url: str) -> str:
-    delay = 1  # Add your desired delay in seconds here
+    delay = 0  # Add your desired delay in seconds here
     time.sleep(delay)
     return pd.Series(_get_studio_themes_genres_demographics(url))
 
-def _df_construction(top_anime: pd.DataFrame) -> pd.DataFrame:
-    """
-    Creates a Dataframe with already existing columns of anime_principal_page.csv.
-    
-    Args:
-    top_anime: The functions expects a pd.DataFrame of anime_principal_page.csv
-    
-    Returns:
-    top_anime: A brand new pd.DataFrame consisting of columns already in anime_principal_page.csv 
-    but it adds:'studio', 'themes', 'genres', 'demographics' to it.
-    
-    """
+def _get_last_anime(file_path):
+    last_anime = (
+    pd.read_csv(file_path)
+    .filter(items=['ranking'])
+    .max()
+    .values[0])
+    return last_anime
+
+def _df_construction(top_anime: pd.DataFrame, k) -> pd.DataFrame:
     urls = top_anime['url'].tolist()
-    results = []
     total_urls = len(urls)
-    for index, url in enumerate(urls):
-        if index%80==0:
-            print(f"Processing URL {index+1} of {total_urls}: {url}")
-            results.append(_process_url(url))
-            print(results[-1])
-            time.sleep(160)
-        else:
-            print(f"Processing URL {index+1} of {total_urls}: {url}")
-            results.append(_process_url(url))
-            print(results[-1])
-    top_anime[['studio', 'themes', 'genres', 'demographics']] = pd.DataFrame(results)
-    return top_anime
+    results = []
+    temporal = pd.DataFrame(columns=['k','studio', 'themes', 'genres', 'demographics'])
+    for index in range(k,k+5):
+        print(f"Processing URL {index+1} of {total_urls}: {(urls[index])}")
+        array = _process_url((urls[index])).to_numpy()
+        print(temporal)
+        # results.append(_process_url((urls[index])))
+        # temporal.loc[index,'studio']= results[0]
+        # temporal.loc[index,'themes']= results[1]
+        # temporal.loc[index,'genres']= results[2]
+        # temporal.loc[index,'demographics']= results[3]
+    #print(temporal)
+    #return temporal
     
-def fetch_data_per_anime() -> None:
-    """
-    Pipeline for creating anime_principal_and_secondary_pages.csv
-    
-    Args:
 
-    
-    Returns:
 
+def fetch_data_per_anime ():
+    k=_get_last_anime(os.path.join(ROOT, config_f['data']['raw']['secondary']))
+    top_anime = pd.read_csv(os.path.join(ROOT, config_f['data']['raw']['principal']))
+    top_anime = _df_construction(top_anime=top_anime, k=k)
+#     top_anime.to_csv(os.path.join(ROOT, config_f['data']['raw']['secondary']),index=False, mode='a',header=False)
     
-    """
-    top_anime = pd.read_csv(ou.PARENT_PATH+"/data/raw/anime_principal_page.csv")
-    top_anime = _df_construction(top_anime=top_anime)
-    top_anime.to_csv(ou.PARENT_PATH+"/data/raw/anime_principal_and_secondary_pages.csv",index=False)
     
-fetch_data_per_anime()
+fetch_data_per_anime()   
+# def _df_construction(top_anime: pd.DataFrame) -> pd.DataFrame:
+#     """
+#     Creates a Dataframe with already existing columns of anime_principal_page.csv.
+    
+#     Args:
+#     top_anime: The functions expects a pd.DataFrame of anime_principal_page.csv
+    
+#     Returns:
+#     top_anime: A brand new pd.DataFrame consisting of columns already in anime_principal_page.csv 
+#     but it adds:'studio', 'themes', 'genres', 'demographics' to it.
+    
+#     """
+#     urls = top_anime['url'].tolist()
+#     results = []
+#     total_urls = len(urls)
+#     for index, url in enumerate(urls):
+#         if index%80==0:
+#             print(f"Processing URL {index+1} of {total_urls}: {url}")
+#             results.append(_process_url(url))
+#             print(results[-1])
+#             time.sleep(160)
+#         else:
+#             print(f"Processing URL {index+1} of {total_urls}: {url}")
+#             results.append(_process_url(url))
+#             print(results[-1])
+#     top_anime[['studio', 'themes', 'genres', 'demographics']] = pd.DataFrame(results)
+#     return top_anime
+    
+    # def fetch_data_per_anime() -> None:
+    #     """
+    #     Pipeline for creating anime_principal_and_secondary_pages.csv
+        
+    #     Args:
+
+        
+    #     Returns:
+        
+    #     """
+    #     top_anime = pd.read_csv(ou.PARENT_PATH+"/data/raw/anime_principal_page.csv")
+    #     top_anime = _df_construction(top_anime=top_anime)
+    #     top_anime.to_csv(ou.PARENT_PATH+"/data/raw/anime_principal_and_secondary_pages.csv",index=False, mode='append')
+        
+    # fetch_data_per_anime()
+
+# df.to_csv(mode='append')
