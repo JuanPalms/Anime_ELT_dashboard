@@ -19,17 +19,18 @@ import numpy as np
 import os
 import time
 
-CURRENT = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(CURRENT)
-
-
-
-
 # Load config file calling load_config function
 config_f = ou.load_config("config.yaml")
 
+# Relative paths to root and current dir
+CURRENT = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(CURRENT)
 
+# Main data files
+PRINCIPAL = os.path.join(ROOT, config_f['data']['raw']['principal'])
+SECONDARY = os.path.join(ROOT, config_f['data']['raw']['secondary'])
 
+# Module functions
 def _get_studio_themes_genres_demographics(url: str) -> str:
     try:
         soup = ou.fetch_html(url)
@@ -61,10 +62,12 @@ def _get_studio_themes_genres_demographics(url: str) -> str:
         print(f"Error processing URL: {url}")
         return None, None, None, None
 
+
 def _process_url(url: str) -> str:
     delay = 0  # Add your desired delay in seconds here
     time.sleep(delay)
     return pd.Series(_get_studio_themes_genres_demographics(url))
+
 
 def _get_last_anime(file_path):
     last_anime = (
@@ -74,33 +77,79 @@ def _get_last_anime(file_path):
     .values[0])
     return last_anime
 
-def _df_construction(top_anime: pd.DataFrame, k) -> pd.DataFrame:
+
+def _df_construction(top_anime: pd.DataFrame, start, window) -> pd.DataFrame:
     urls = top_anime['url'].tolist()
-    total_urls = len(urls)
-    results = []
-    temporal = pd.DataFrame(columns=['k','studio', 'themes', 'genres', 'demographics'])
-    for index in range(k,k+5):
-        print(f"Processing URL {index+1} of {total_urls}: {(urls[index])}")
+    
+    # Global object to store scrapper output
+    temp_ = np.empty(shape=(0,5))
+
+    for index in range(start, start+window):
+        print(f"Processing URL {index+1} of {len(urls)}: {(urls[index])}")
+        
+        # Convert url output to ndarray
         array = _process_url((urls[index])).to_numpy()
-        print(temporal)
-        # results.append(_process_url((urls[index])))
-        # temporal.loc[index,'studio']= results[0]
-        # temporal.loc[index,'themes']= results[1]
-        # temporal.loc[index,'genres']= results[2]
-        # temporal.loc[index,'demographics']= results[3]
-    #print(temporal)
-    #return temporal
+
+        # Store url output in global object
+        array = np.insert(
+            arr=array
+            ,obj=0
+            ,values=index).reshape((1,5))
+        
+        # Dismiss None anime
+        if array is not None:
+            temp_ = np.append(
+                arr=temp_
+                ,values=array
+                ,axis=0)
     
+    # Format global objet to dataframe
+    temp_ = (
+        pd.DataFrame(
+            temp_
+            ,columns=['id','studio', 'themes', 'genres', 'demographics'])
+        .set_index('id')
+    )
+
+    return temp_
 
 
-def fetch_data_per_anime ():
-    k=_get_last_anime(os.path.join(ROOT, config_f['data']['raw']['secondary']))
-    top_anime = pd.read_csv(os.path.join(ROOT, config_f['data']['raw']['principal']))
-    top_anime = _df_construction(top_anime=top_anime, k=k)
-#     top_anime.to_csv(os.path.join(ROOT, config_f['data']['raw']['secondary']),index=False, mode='a',header=False)
+if __name__ == '__main__':
+
+    # Get web scrapper start point
+    start = _get_last_anime(SECONDARY)
     
+    # Define web scrapper query window
+    window = 5
+
+    # Get dataframe with all existing anime
+    top_anime = pd.read_csv(PRINCIPAL)
     
-fetch_data_per_anime()   
+    # Mask anime df with scrapper window
+    top_mask_ = (
+        top_anime
+        .loc[range(start, start+window)]
+    )
+    
+    # Build scrapper output
+    df_ = _df_construction(
+        top_anime=top_anime
+        ,start=start
+        ,window=window)
+    
+    # Add scrapper output to existing data
+    top_mask_ = top_mask_.join(df_)
+
+    # Save output to existing file
+    top_mask_.to_csv(
+        SECONDARY
+        ,index=False
+        ,mode='a'
+        ,header=False)
+    
+    print('Job done')
+
+
 # def _df_construction(top_anime: pd.DataFrame) -> pd.DataFrame:
 #     """
 #     Creates a Dataframe with already existing columns of anime_principal_page.csv.
