@@ -115,40 +115,73 @@ def _df_construction(top_anime: pd.DataFrame, start, window) -> pd.DataFrame:
 
 
 if __name__ == '__main__':
+    for i in range(100):
+        if i%15==0:
+            # Get web scrapper start point
+            start = _get_last_anime(SECONDARY)
+            
+            # Define web scrapper query window
+            window = 5
 
-    # Get web scrapper start point
-    start = _get_last_anime(SECONDARY)
-    
-    # Define web scrapper query window
-    window = 5
+            # Get dataframe with all existing anime
+            top_anime = pd.read_csv(PRINCIPAL)
+            
+            # Mask anime df with scrapper window
+            top_mask_ = (
+                top_anime
+                .loc[range(start, start+window)]
+            )
+            
+            # Build scrapper output
+            df_ = _df_construction(
+                top_anime=top_anime
+                ,start=start
+                ,window=window)
+            
+            # Add scrapper output to existing data
+            top_mask_ = top_mask_.join(df_)
 
-    # Get dataframe with all existing anime
-    top_anime = pd.read_csv(PRINCIPAL)
-    
-    # Mask anime df with scrapper window
-    top_mask_ = (
-        top_anime
-        .loc[range(start, start+window)]
-    )
-    
-    # Build scrapper output
-    df_ = _df_construction(
-        top_anime=top_anime
-        ,start=start
-        ,window=window)
-    
-    # Add scrapper output to existing data
-    top_mask_ = top_mask_.join(df_)
+            # Save output to existing file
+            top_mask_.to_csv(
+                SECONDARY
+                ,index=False
+                ,mode='a'
+                ,header=False)
+            time.sleep(210)
+            print('Job 1 done')
+        else:
+            # Get web scrapper start point
+            start = _get_last_anime(SECONDARY)
+            
+            # Define web scrapper query window
+            window = 5
 
-    # Save output to existing file
-    top_mask_.to_csv(
-        SECONDARY
-        ,index=False
-        ,mode='a'
-        ,header=False)
-    
-    print('Job done')
+            # Get dataframe with all existing anime
+            top_anime = pd.read_csv(PRINCIPAL)
+            
+            # Mask anime df with scrapper window
+            top_mask_ = (
+                top_anime
+                .loc[range(start, start+window)]
+            )
+            
+            # Build scrapper output
+            df_ = _df_construction(
+                top_anime=top_anime
+                ,start=start
+                ,window=window)
+            
+            # Add scrapper output to existing data
+            top_mask_ = top_mask_.join(df_)
 
+            # Save output to existing file
+            top_mask_.to_csv(
+                SECONDARY
+                ,index=False
+                ,mode='a'
+                ,header=False)
+            
+            print('Job 2 done')
 
 # def _df_construction(top_anime: pd.DataFrame) -> pd.DataFrame:
 #     """
