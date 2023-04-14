@@ -15,3 +15,6 @@ data:
   raw:
     principal: "data/raw/anime_principal_page.csv"
     secondary: "data/raw/anime_principal_and_secondary_pages.csv"
+  clean:
+    pre_clean: "data/clean/anime_data_pre_clean.csv"
+    clean: "data/clean/anime_data_clean.csv"
