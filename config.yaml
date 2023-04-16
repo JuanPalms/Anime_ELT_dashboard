@@ -18,3 +18,7 @@ data:
   clean:
     pre_clean: "data/clean/anime_data_pre_clean.csv"
     clean: "data/clean/anime_data_clean.csv"
+  transform:
+    main: "data/transform/anime_transform.csv"
+    cat_generes: "data/transform/cat_genres.csv"
+    cat_themes: "data/transform/cat_themes.csv"
