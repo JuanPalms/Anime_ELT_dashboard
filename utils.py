@@ -3,6 +3,7 @@ import yaml
 import logging
 import requests
 
+from re import sub
 from ast import literal_eval
 
 CURRENT = os.path.dirname(os.path.abspath(__file__))
@@ -32,16 +33,16 @@ def global_format(x):
     Returns:
         x: String without atypical characters
     '''
-    x = re.sub(pattern=r"[°.-]+", repl='_', string=x)
-    x = re.sub(pattern="'s", repl='', string=x)
+    x = sub(pattern=r"[°.-]+", repl='_', string=x)
+    x = sub(pattern="'s", repl='', string=x)
     return x
 
-# lambda function to format single string data in cell
+# lambda to format single string in dataframe cell
 format_single_str = lambda cel_: '_'.join(
     cel_.rstrip().lstrip().split(sep=' ')
 ).lower()
 
-# lambda function to format list like data in cell
+# lambda to format list like strings in dataframe cell
 format_list_str = lambda cel_: [
     global_format(
         '_'.join(val_.split(' ')).lower()
