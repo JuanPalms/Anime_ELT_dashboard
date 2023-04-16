@@ -7,7 +7,7 @@ from re import sub
 from ast import literal_eval
 
 CURRENT = os.path.dirname(os.path.abspath(__file__))
-
+ROOT = os.path.dirname(CURRENT)
 
 # Function to load yaml configuration file
 def load_config(config_name):
@@ -18,7 +18,7 @@ def load_config(config_name):
     Returns:
     Configuration file
     """
-    with open(os.path.join(CURRENT, config_name), encoding="utf-8") as conf:
+    with open(os.path.join(ROOT, config_name), encoding="utf-8") as conf:
         config = yaml.safe_load(conf)
     return config
 
@@ -48,3 +48,9 @@ format_list_str = lambda cel_: [
         '_'.join(val_.split(' ')).lower()
     ) for val_ in literal_eval(cel_)
 ]
+
+
+if __name__ == '__main__':
+    print(f'''Utils module paths:
+    - CURRENT: {CURRENT}
+    - ROOT: {ROOT}''')
