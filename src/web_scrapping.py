@@ -9,15 +9,16 @@ import numpy as np
 from bs4 import BeautifulSoup
 
 # local imports
-import utils as ut
+from .utils import load_config, ROOT
 
 # Load config file calling load_config function
-config_f = ut.load_config("config.yaml")
+config_f = load_config("config.yaml")
 
-PRINCIPAL = os.path.join(ut.CURRENT, config_f["data"]["raw"]["principal"])
-SECONDARY = os.path.join(ut.CURRENT, config_f["data"]["raw"]["secondary"])
-PRE_CLEAN = os.path.join(ut.CURRENT, config_f["data"]["clean"]["pre_clean"])
-CLEAN = os.path.join(ut.CURRENT, config_f["data"]["clean"]["clean"])
+PRINCIPAL = os.path.join(ROOT, config_f["data"]["raw"]["principal"])
+SECONDARY = os.path.join(ROOT, config_f["data"]["raw"]["secondary"])
+PRE_CLEAN = os.path.join(ROOT, config_f["data"]["clean"]["pre_clean"])
+CLEAN = os.path.join(ROOT, config_f["data"]["clean"]["clean"])
+
 
 # ==================================================
 # ========= Scrapper First Part ====================
@@ -139,7 +140,7 @@ def fetch_ranking(url, results_limit):
     combined_df = pd.concat(dataframes, ignore_index=True)
 
     # DF exported to csv
-    combined_df.to_csv(ut.CURRENT + "/data/raw/anime_principal_page.csv", index=False)
+    combined_df.to_csv(ROOT + "/data/raw/anime_principal_page.csv", index=False)
 
 
 # ==================================================
@@ -320,4 +321,71 @@ def _clean_raw_data():
     print(result_df.head())
 
     result_df.to_csv(PRE_CLEAN, index=False)
+
+
+# ==================================================
+# ============ transform - Miguel C ================
+# ==================================================
+
+
+def build_catalog(df_, columns, count=True):
+    '''
+    Generate catalog of unique classes in column
+    for given dataframe
+
+    Params:
+        df_: Dataframe
+        columns: Columns to extract classes
+        count: Whether to return value counts or not
+
+    Returns:
+        catalogs: List of dictionaries, length = len(columns)
+        containing unique classes per column in dataframe
+    '''
+    # Generate list of catalogs to compute
+    catalogs = [{col_:None} for col_ in columns]
     
+    # Populate all catalogs
+    for id_, col_ in enumerate(columns):
+        
+        # Empty list of tokens in catalog
+        tokens = []
+        
+        # Append all existing tokens in column
+        for val_ in df_[col_]:
+            tokens += val_
+        
+        # Assign unique tokens in list to catalog
+        if count:
+            catalogs[id_][col_] = (
+                # Convert tokens list to pandas series
+                pd.Series(tokens)
+                # Extract series value counts
+                .value_counts()
+                # Reset index to store tokens as dataframe
+                .reset_index()
+                # Rename columns with convenient names
+                .rename(columns={'index':col_, 0:'count'})
+                # Sort tokens alphabetically
+                .sort_values(by=col_)
+                # Reset dataframe index
+                .reset_index(drop=True))
+        else:
+            catalogs[id_][col_] = (
+                # Convert array to dataframe for manipulation
+                pd.DataFrame(
+                    # Convert tokens list to pandas series
+                    pd.Series(tokens)
+                    # Extract series unique values
+                    .unique())
+                # Rename columns with convenient names
+                .rename(columns={0:col_})
+                # Sort tokens alphabetically
+                .sort_values(by=col_)
+                # Reset dataframe index
+                .reset_index(drop=True))
+    
+    return catalogs
+
+if __name__ == '__main__':
+    print('Web scrapping module')
