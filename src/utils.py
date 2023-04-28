@@ -33,7 +33,7 @@ def global_format(x):
     Returns:
         x: String without atypical characters
     '''
-    x = sub(pattern=r"[°.-]+", repl='_', string=x)
+    x = sub(pattern=r"[()°.-]+", repl='_', string=x)
     x = sub(pattern="'s", repl='', string=x)
     return x
 
