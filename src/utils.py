@@ -44,9 +44,11 @@ format_single_str = lambda cel_: '_'.join(
 
 # lambda to format list like strings in dataframe cell
 format_list_str = lambda cel_: [
-    global_format(
-        '_'.join(val_.split(' ')).lower()
-    ) for val_ in literal_eval(cel_)
+    '_'.join(
+        global_format(val_.rstrip().lstrip())
+        .lower()
+        .split(' ')
+    ) for val_ in cel_.split(',')
 ]
 
 
