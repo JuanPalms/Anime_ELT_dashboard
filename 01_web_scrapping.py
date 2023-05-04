@@ -12,9 +12,9 @@ base = config_f["url"]
 limit = config_f["results_limit"]
 
 # first part of web scrapping
-ws.fetch_ranking(url=base, results_limit=13900)
+#ws.fetch_ranking(url=base, results_limit=13900)
 
 # second part of web scrapping
-#ws.fetch_data_per_anime(2000)
+ws.fetch_data_per_anime(3000)
 
 ws._clean_raw_data()
