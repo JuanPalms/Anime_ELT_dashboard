@@ -23,13 +23,13 @@ try:
     iterations = missing_rows//5
     ws.fetch_data_per_anime(iterations)
 except:
-    iterations = 3000
+    iterations = 13900
     top_anime = pd.read_csv(ws.PRINCIPAL)
     top_mask_ = top_anime.loc[range(0, 5)]
     secondary = ws._df_construction(top_anime=top_anime,start=0,window=5)
     secondary = top_mask_.join(secondary)
     secondary.to_csv(ws.SECONDARY, index=False)
 
-ws.fetch_data_per_anime(3000) 
+ws.fetch_data_per_anime(13900) 
 
 #ws._clean_raw_data()
