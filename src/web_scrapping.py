@@ -243,7 +243,7 @@ def fetch_data_per_anime(iterations):
 
             # Save output to existing file
             top_mask_.to_csv(SECONDARY, index=False, mode="a", header=False)
-            time.sleep(210)
+            time.sleep(190)
             print("Job 1 done")
         else:
             # Get web scrapper start point
