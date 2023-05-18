@@ -8,6 +8,17 @@ results_limit: 13900
 
 # 1) DIRECTORIES
 data_directory: ../data
-raw_data: /raw
+transform_data: /transform
 clean_data: /clean
 
+data:
+  raw:
+    principal: "data/raw/anime_principal_page.csv"
+    secondary: "data/raw/anime_principal_and_secondary_pages.csv"
+  clean:
+    pre_clean: "data/clean/anime_data_pre_clean.csv"
+    clean: "data/clean/anime_data_clean.csv"
+  transform:
+    main: "data/transform/anime_transform.csv"
+    cat_generes: "data/transform/cat_genres.csv"
+    cat_themes: "data/transform/cat_themes.csv"
