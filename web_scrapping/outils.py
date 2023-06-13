@@ -1,43 +1,61 @@
-"""
-This python module defines some useful functions to perform web scrapping
-"""
-import os
-import yaml
-import logging
+# anime_scraper.py
+
 import requests
 from bs4 import BeautifulSoup
+import configparser
+import pylint
 
-# folder to load config file
-CONFIG_PATH = "../"
+# Load configuration from config.ini file
+config = configparser.ConfigParser()
+config.read('config.ini')
 
-# Current path
-PARENT_PATH = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))                                         
+# Get the base URL and target page from the configuration
+base_url = config.get('website', 'base_url')
+target_page = config.get('website', 'target_page')
 
-# Function to load yaml configuration file
-def load_config(config_name):
-    """
-    Sets the configuration file path
-    Args:
-    config_name: Name of the configuration file in the directory
-    Returns:
-    Configuration file
-    """
-    with open(os.path.join(PARENT_PATH, config_name), encoding="utf-8") as conf:
-        config = yaml.safe_load(conf)
-    return config
+def scrape_anime_list():
+    # Construct the full URL
+    url = base_url + target_page
 
-def fetch_html(url,parser='lxml'):
-    """
-    This function obtains the information of an url and parses it with some parser
-    Args: 
-    url: page url to be scrapped
-    parser: select 'html.parser' or 'lxml'
-    Returns:
-    BeautifulSoup object
-    """
-    response = requests.get(url)  # Send an HTTP GET request to the URL
-    if response.status_code == 200:  # Check if the request was successful (status code 200)
-        # Parse the response content with BeautifulSoup and return the parsed HTML
-        return BeautifulSoup(response.content, parser)
+    # Send an HTTP GET request to the website
+    response = requests.get(url)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the HTML content using Beautiful Soup
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Find the anime list elements
+        anime_list = soup.find_all('div', class_='anime')
+
+        # Extract information from each anime element
+        for anime in anime_list:
+            title = anime.find('h2').text.strip()
+            rating = anime.find('span', class_='rating').text.strip()
+            episodes = anime.find('span', class_='episodes').text.strip()
+
+            # Print the extracted information
+            print(f"Title: {title}")
+            print(f"Rating: {rating}")
+            print(f"Episodes: {episodes}")
+            print()
+
     else:
-        return None
+        print(f"Error: Failed to retrieve the web page. Status code: {response.status_code}")
+
+def main():
+    scrape_anime_list()
+
+if __name__ == '__main__':
+    main()
+##To use this module, you would need to create a config.ini file in the same directory as the anime_scraper.py file, with the following content:
+
+[website]
+base_url = <website_base_url>
+target_page = <target_page_url>
+
+Replace <website_base_url> with the base URL of the anime website you want to scrape, and <target_page_url> with the specific page containing the anime list.
+
+To run the module, execute python anime_scraper.py in the command line.
+
+Make sure you have the required libraries (requests, beautifulsoup4, configparser, and pylint) installed before running the code.
