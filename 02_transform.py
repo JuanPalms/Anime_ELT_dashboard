@@ -3,7 +3,7 @@ import pandas as pd
 
 import src.web_scrapping as ws
 import src.utils as ut
-
+#configuring 
 # config file loading
 config_f = ws.config_f
 
